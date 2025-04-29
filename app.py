@@ -15,9 +15,9 @@ def download_model_from_drive(gdrive_url, output_path):
 @st.cache_resource
 def load_selected_model(model_name):
     model_paths = {
-        'CNN': ('https://drive.google.com/uc?id=YOUR_CNN_FILE_ID', 'cnn_model.h5'),
-        'ResNet50': ('https://drive.google.com/uc?id=YOUR_RESNET50_FILE_ID', 'resnet50_model.h5'),
-        'VGG19': ('https://drive.google.com/uc?id=YOUR_VGG19_FILE_ID', 'vgg19_model.h5'),
+        'CNN': ('https://drive.google.com/uc?id=1dX_uFMbggm9fDkfPZORing9GDxWwY2', 'cnn_model.h5'),
+        'ResNet50': ('https://drive.google.com/uc?id=1hBHYBBnkd0t3ZRVS7Pxqecf5eyu9HUlk', 'resnet50_model.h5'),
+        'VGG19': ('https://drive.google.com/uc?id=19Jy70lJjwp0QSbzFrZv_JaHHOmhTIm_y', 'vgg19_model.h5'),
     }
     
     drive_url, file_name = model_paths[model_name]
