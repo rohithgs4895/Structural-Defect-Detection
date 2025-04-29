@@ -15,9 +15,9 @@ def download_model(gdrive_url, filename):
 @st.cache_resource
 def load_model_from_drive(model_name):
     model_links = {
-        'Custom CNN': ('https://drive.google.com/uc?id=YOUR_CNN_FILE_ID', 'cnn_model.h5'),
-        'ResNet50': ('https://drive.google.com/uc?id=YOUR_RESNET50_FILE_ID', 'resnet50_model.h5'),
-        'VGG19': ('https://drive.google.com/uc?id=YOUR_VGG19_FILE_ID', 'vgg19_model.h5'),
+        'Custom CNN': ('https://drive.google.com/uc?id=1dX_uFMbggm9fDkfPZORing9GDxWwY2-v', 'cnn_model.h5'),
+        'ResNet50': ('https://drive.google.com/uc?id=1hBHYBBnkd0t3ZRVS7Pxqecf5eyu9HUlk', 'resnet50_model.h5'),
+        'VGG19': ('https://drive.google.com/uc?id=19Jy70lJjwp0QSbzFrZv_JaHHOmhTIm_y', 'vgg19_model.h5'),
     }
     gdrive_url, filename = model_links[model_name]
     download_model(gdrive_url, filename)
