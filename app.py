@@ -18,6 +18,7 @@ def load_model_from_drive(model_name):
         'Custom CNN': ('https://drive.google.com/uc?id=1dX_uFMbggm9fDkfPZORing9GDxWwY2-v', 'cnn_model.h5'),
         'ResNet50': ('https://drive.google.com/uc?id=1hBHYBBnkd0t3ZRVS7Pxqecf5eyu9HUlk', 'resnet50_model.h5'),
         'VGG19': ('https://drive.google.com/uc?id=19Jy70lJjwp0QSbzFrZv_JaHHOmhTIm_y', 'vgg19_model.h5'),
+
     }
     gdrive_url, filename = model_links[model_name]
     download_model(gdrive_url, filename)
@@ -34,11 +35,15 @@ def preprocess_image(image, target_size=(224, 224)):
     img_array = np.expand_dims(img_array, axis=0)  # (1, 224, 224, 3)
     return img_array
 
+# Class names based on your project
+structure_classes = ['Deck', 'Pavement', 'Wall']
+crack_classes = ['Cracked', 'Non Cracked']
+
 # Streamlit app
 st.set_page_config(page_title="Structural Defect Detection", page_icon="🏗️")
 
 st.title("🏗️ Structural Defect Detection App")
-st.write("Upload an image of concrete structure to detect cracks or defects.")
+st.write("Upload an image of concrete structure to detect type and crack status.")
 
 uploaded_image = st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
 model_selection = st.selectbox("Select the Model for Prediction", ["Custom CNN", "ResNet50", "VGG19"])
@@ -53,15 +58,23 @@ if uploaded_image:
     if st.button("Predict"):
         prediction = model.predict(processed_image)
 
-        if prediction.shape[-1] == 1:
-            # Binary classification with single sigmoid output
-            predicted_label = 'Defective' if prediction[0][0] > 0.5 else 'Non-Defective'
-            confidence = prediction[0][0] if prediction[0][0] > 0.5 else 1 - prediction[0][0]
-        else:
-            # Multi-class prediction (Softmax)
-            predicted_class = np.argmax(prediction, axis=1)[0]
-            class_names = {0: "Non-Defective", 1: "Defective"}  # adjust if needed
-            predicted_label = class_names.get(predicted_class, "Unknown")
+        if prediction.shape[-1] == 6:
+            # 6 outputs: Deck Cracked, Deck NonCracked, Pavement Cracked, Pavement NonCracked, Wall Cracked, Wall NonCracked
+            predicted_idx = np.argmax(prediction, axis=1)[0]
+            
+            # Map index to structure type and crack status
+            mapping = {
+                0: ('Deck', 'Cracked'),
+                1: ('Deck', 'Non Cracked'),
+                2: ('Pavement', 'Cracked'),
+                3: ('Pavement', 'Non Cracked'),
+                4: ('Wall', 'Cracked'),
+                5: ('Wall', 'Non Cracked')
+            }
+
+            structure_type, crack_status = mapping[predicted_idx]
             confidence = np.max(prediction)
 
-        st.success(f"Prediction: {predicted_label} ({confidence*100:.2f}% confidence)")
+            st.success(f"Prediction: {structure_type} - {crack_status} ({confidence*100:.2f}% confidence)")
+        else:
+            st.error("Model output shape not matching expected 6 classes. Please check your model.")
